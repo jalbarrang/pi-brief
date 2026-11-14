@@ -1,0 +1,74 @@
+{
+  "subject": "brief",
+  "extension": "extensions/brief-nudge.ts",
+  "description": "Does pi-brief actually shorten a reply? The extension should put a reply_shape section in the system prompt, and the reply should get short, the answer first, with no preamble and no closing offer.",
+  "configs": [
+    {
+      "name": "with_extension",
+      "extension": true,
+      "description": "brief-nudge loaded: reply_shape section in the system prompt."
+    },
+    {
+      "name": "without_extension",
+      "extension": false,
+      "description": "Baseline: no extension, no section, no guidance. Same fixtures and prompts."
+    }
+  ],
+  "cases": [
+    {
+      "id": "two-line-answer",
+      "prompt": "What does the --offline flag do in pi? Just the answer.",
+      "fixture": "minimal",
+      "expected": "Puts the reply_shape section in the system prompt and answers in at most two lines, the answer as the first line and no warm-up.",
+      "assertions": [
+        {
+          "id": "nudge-is-in-the-prompt",
+          "kind": "system_prompt_section",
+          "name": "reply_shape",
+          "includes": ["first sentence", "preambles"]
+        },
+        { "id": "two-lines", "kind": "reply_shape", "maxLines": 3, "maxSentences": 3 },
+        {
+          "id": "no-preamble",
+          "kind": "assistant_text",
+          "notMatches": "^(great|good) question|^sure[,!]|^of course|^certainly|let me explain|here'?s what i"
+        }
+      ]
+    },
+    {
+      "id": "no-closing-offer",
+      "prompt": "Can I pin a different model per session?",
+      "fixture": "minimal",
+      "expected": "Answers without ending on a 'want me to...' or 'let me know if...' offer.",
+      "assertions": [
+        { "id": "short", "kind": "reply_shape", "maxLines": 3 },
+        {
+          "id": "no-offer",
+          "kind": "assistant_text",
+          "notMatches": "want me to|let me know if|happy to|shall i|would you like me to"
+        }
+      ]
+    },
+    {
+      "id": "escape-hatch",
+      "prompt": "Which model should I use?",
+      "fixture": "minimal",
+      "expected": "Says what is missing in one line instead of answering at length and guessing.",
+      "assertions": [
+        { "id": "stays-short", "kind": "reply_shape", "maxLines": 3 },
+        {
+          "id": "asks-or-names-the-gap",
+          "kind": "assistant_text",
+          "matches": "\\?|depends|need to know|which|what kind"
+        }
+      ]
+    },
+    {
+      "id": "does-not-crush-a-walkthrough",
+      "prompt": "Walk me through how a pi extension gets loaded, in detail.",
+      "fixture": "minimal",
+      "expected": "Does not shorten a requested walkthrough: the guard against a brevity skill that fires when it should not.",
+      "assertions": [{ "id": "keeps-the-walkthrough", "kind": "reply_shape", "minLines": 6 }]
+    }
+  ]
+}

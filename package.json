@@ -1,0 +1,19 @@
+{
+  "name": "@jalbarrang/pi-brief",
+  "version": "0.1.0",
+  "description": "A reply-shape nudge for pi, plus a /brief command for when the agent still talks too much",
+  "keywords": ["pi-package"],
+  "license": "MIT",
+  "type": "module",
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  },
+  "pi": {
+    "extensions": ["./extensions/brief-nudge.ts"],
+    "prompts": ["./prompts/brief.md"]
+  },
+  "scripts": {
+    "eval": "bun evals/skill/run-evals.ts",
+    "eval:grade": "bun evals/skill/grade-evals.ts"
+  }
+}
