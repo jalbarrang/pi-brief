@@ -9,8 +9,9 @@ Two things for one problem: the agent talks too much.
 ## Install
 
 ```bash
-pi install ./pi-brief          # local checkout
-pi install npm:@jalbarrang/pi-brief
+pi install git:github.com/jalbarrang/pi-brief   # straight from GitHub
+pi install ./pi-brief                           # from a local checkout
+pi install npm:@jalbarrang/pi-brief             # once published to npm
 ```
 
 `/reload` in an active session, or restart.
